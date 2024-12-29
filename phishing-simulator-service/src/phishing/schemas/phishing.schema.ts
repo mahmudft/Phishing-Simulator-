@@ -5,7 +5,13 @@ import { HydratedDocument } from 'mongoose';
 
 export type PhisihingDocument = HydratedDocument<Phisihing>;
 
-@Schema()
+
+export enum EmailStatus {
+  SENT,
+  OPENED,
+  FAILED
+}
+@Schema({ timestamps: true })
 export class Phisihing extends Document {
   @Prop({ required: true })
   userID: string;
@@ -16,8 +22,8 @@ export class Phisihing extends Document {
   @Prop({ required: true })
   recipient: string;
 
-  @Prop({ required: false, default: false })
-  status: boolean;
+  @Prop({ type: String, enum: EmailStatus, default: EmailStatus.FAILED })
+  status: EmailStatus;
 
   @Prop({ required: false, default: 0 })
   clickCount: number;

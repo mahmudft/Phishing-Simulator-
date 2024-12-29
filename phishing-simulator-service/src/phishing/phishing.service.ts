@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Phisihing, PhisihingDocument } from './schemas/phishing.schema';
+import { EmailStatus, Phisihing, PhisihingDocument } from './schemas/phishing.schema';
 
 import { randomUUID } from 'crypto';
 import { EmailService } from 'src/email/email.service';
@@ -30,7 +30,7 @@ export class PhishingService {
     attempt.body = this.createPayload(attempt)
     let emailResponse = await this.emailService.sendEmail(attempt);
     if (emailResponse) {
-      attempt.status = true;
+      attempt.status = EmailStatus.SENT;
     }
     return attempt.save();
   }
@@ -44,6 +44,7 @@ export class PhishingService {
   async increaseClickCount(linkID: string): Promise<Phisihing> {
     let attempt = await this.phisihingModel.findOne({ linkID });
     attempt.clickCount += 1;
+    attempt.status = EmailStatus.OPENED;
     return attempt.save();
   }
 }
