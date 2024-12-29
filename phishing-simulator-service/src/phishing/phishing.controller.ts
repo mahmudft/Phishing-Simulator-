@@ -19,8 +19,8 @@ export class PhishingController {
     }
 
     @Get('clickbait/:uuid')
-    getClickCount(@Param('uuid') uuid: string): boolean {
+    getClickCount(@Param('uuid') uuid: string): string {
       this.phisingService.increaseClickCount(uuid)
-      return true
+      return 'clicked!'
     }
 }
