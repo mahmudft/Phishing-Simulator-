@@ -93,4 +93,5 @@ For destroying
 
 ## Screenshot
 
-![screenshot](images/demo.png)
+![screenshot](images/demomain.png)
+![screenshot](images/demoform.png)
