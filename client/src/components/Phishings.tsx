@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
+import EmailIcon from '@mui/icons-material/Email';
+import DraftsIcon from '@mui/icons-material/Drafts';
 
 import {
   Table,
@@ -13,10 +15,26 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { AttemptInterface } from "../interfaces/attempt.interfaces";
+import { AttemptInterface, EmailStatus } from "../interfaces/attempt.interfaces";
 
 const Phisings: React.FC = () => {
   const [items, setItems] = useState<Array<AttemptInterface>>([]);
+
+
+  const getStatusIcon = (status: EmailStatus | string) => {
+    const emailStatus = typeof status === "string" ? parseInt(status, 10) : status; 
+  
+    switch (emailStatus) {
+      case EmailStatus.SENT: 
+        return <EmailIcon color={"primary"} />;
+      case EmailStatus.OPENED:
+        return <DraftsIcon color={"success"} />;
+      case EmailStatus.FAILED:
+        return <CloseIcon color={"error"} />;
+      default:
+        return null; 
+    }
+  };
 
   useEffect(() => {
     async function getAllAttempts() {
@@ -64,11 +82,7 @@ const Phisings: React.FC = () => {
               </TableCell>
               <TableCell>{row.clickCount}</TableCell>
               <TableCell>
-                {row.status ? (
-                  <DoneIcon color={"success"} />
-                ) : (
-                  <CloseIcon color={"error"} />
-                )}
+                {getStatusIcon(row.status)}
               </TableCell>
             </TableRow>
           ))): <TableRow key={1}>
