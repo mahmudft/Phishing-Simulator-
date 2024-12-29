@@ -1,8 +1,15 @@
+
+export enum EmailStatus {
+  SENT,
+  OPENED,
+  FAILED
+}
+
 export interface AttemptInterface {
     userID: string;
     body: string;
     recipient: string;
-    status: boolean;
+    status: EmailStatus;
     clickCount: number;
     linkID: string;
   }
