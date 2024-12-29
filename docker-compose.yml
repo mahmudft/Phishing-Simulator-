@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  core-service:
+    build:
+      context: ./core-service
+      dockerfile: Dockerfile
+    container_name: core-service
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URI: "mongodb://mongodb:27017/cores"
+      PORT: 3000
+      JWT_SECRET: ''
+      SIMULATOR_URL: "http://phishing-service:3001"  
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  phishing-service:
+    build:
+      context: ./phishing-simulator-service
+      dockerfile: Dockerfile
+    container_name: phishing-service
+    ports:
+      - "3001:3001"
+    environment:
+      MONGODB_URI: "mongodb://mongodb:27017/phishings"
+      PORT: 3001
+      PHISHING_LINK: "http://localhost:3001" 
+      EMAIL_HOST: ""
+      EMAIL_USER: ""
+      EMAIL_PASSWORD: ""
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - phishing-service
+      - core-service
+    environment:
+      VITE_PH_API: "http://localhost:3000"
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
